@@ -1,6 +1,6 @@
-﻿using HospitalityManagementSystems.Data.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using HospitalityManagementSystems.Data.Models;
 
 namespace HospitalityManagementSystems.Data
 {
@@ -10,6 +10,23 @@ namespace HospitalityManagementSystems.Data
         {
         }
 
-        
+        public DbSet<Appointments> Appointments { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Appointments>()
+                .HasOne(a => a.Doctor)
+                .WithMany(u => u.DoctorAppointments)
+                .HasForeignKey(a => a.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Appointments>()
+                .HasOne(a => a.Patient)
+                .WithMany(u => u.PatientAppointments)
+                .HasForeignKey(a => a.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

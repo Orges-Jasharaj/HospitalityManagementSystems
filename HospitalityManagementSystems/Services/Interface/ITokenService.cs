@@ -1,6 +1,6 @@
 ﻿using HospitalityManagementSystems.Data.Models;
 using System.Security.Claims;
-using static HospitalityManagementSystems.Dtos.TokenDtos;
+using HospitalityManagementSystems.Dtos.Responses;
 
 
 namespace ToDoWebAPI.Service.Interface

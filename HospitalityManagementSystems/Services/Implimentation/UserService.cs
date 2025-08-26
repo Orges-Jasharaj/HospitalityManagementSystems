@@ -1,5 +1,6 @@
 ﻿using HospitalityManagementSystems.Data.Models;
-using HospitalityManagementSystems.Dtos;
+using HospitalityManagementSystems.Dtos.Requests;
+using HospitalityManagementSystems.Dtos.Responses;
 using HospitalityManagementSystems.Services.Interface;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
@@ -222,7 +223,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
 
         }
 
-        public async Task<ResponseDto<LoginResponseDto>> RefreshToken(TokenDtos.RefreshTokenRequestDto refreshTokenDto)
+        public async Task<ResponseDto<LoginResponseDto>> RefreshToken(RefreshTokenRequestDto refreshTokenDto)
         {
             var claimPrincipal = _tokenService.GetClaimsPrincipal(refreshTokenDto.AccessToken);
             if (claimPrincipal == null)

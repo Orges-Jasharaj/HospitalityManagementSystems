@@ -1,8 +1,8 @@
-﻿using HospitalityManagementSystems.Dtos;
+﻿using HospitalityManagementSystems.Dtos.Requests;
+using HospitalityManagementSystems.Dtos.Responses;
 using HospitalityManagementSystems.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static HospitalityManagementSystems.Dtos.TokenDtos;
 
 namespace HospitalityManagementSystems.Controllers
 {

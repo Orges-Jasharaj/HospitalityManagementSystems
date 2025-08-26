@@ -1,5 +1,5 @@
-﻿using HospitalityManagementSystems.Dtos;
-using static HospitalityManagementSystems.Dtos.TokenDtos;
+﻿using HospitalityManagementSystems.Dtos.Requests;
+using HospitalityManagementSystems.Dtos.Responses;
 
 namespace HospitalityManagementSystems.Services.Interface
 {

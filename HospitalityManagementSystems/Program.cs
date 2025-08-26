@@ -1,7 +1,7 @@
 
 using HospitalityManagementSystems.Data;
 using HospitalityManagementSystems.Data.Models;
-using HospitalityManagementSystems.Dtos;
+using HospitalityManagementSystems.Dtos.System;
 using HospitalityManagementSystems.Services.Implimentation;
 using HospitalityManagementSystems.Services.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
-using ToDoWebAPI.Service.Implimentation;
 using ToDoWebAPI.Service.Interface;
 
 namespace HospitalityManagementSystems
@@ -34,6 +33,7 @@ namespace HospitalityManagementSystems
 
             builder.Services.AddScoped<IUser, UserService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<IAppointment, AppointmentService>();
 
 
             builder.Services.AddSwaggerGen(c =>

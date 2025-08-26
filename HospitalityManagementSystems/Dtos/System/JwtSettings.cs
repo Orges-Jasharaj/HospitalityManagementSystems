@@ -1,4 +1,4 @@
-﻿namespace HospitalityManagementSystems.Dtos
+﻿namespace HospitalityManagementSystems.Dtos.System
 {
     public class JwtSettings
     {

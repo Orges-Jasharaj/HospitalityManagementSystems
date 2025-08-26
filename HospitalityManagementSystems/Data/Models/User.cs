@@ -10,5 +10,7 @@ namespace HospitalityManagementSystems.Data.Models
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
 
+        public ICollection<Appointments> DoctorAppointments { get; set; }
+        public ICollection<Appointments> PatientAppointments { get; set; }
     }
 }

@@ -1,12 +1,12 @@
 ﻿using HospitalityManagementSystems.Data.Models;
-using HospitalityManagementSystems.Dtos;
+using HospitalityManagementSystems.Dtos.Responses;
+using HospitalityManagementSystems.Dtos.System;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ToDoWebAPI.Service.Interface;
-using static HospitalityManagementSystems.Dtos.TokenDtos;
 
 
 namespace HospitalityManagementSystems.Services.Implimentation
