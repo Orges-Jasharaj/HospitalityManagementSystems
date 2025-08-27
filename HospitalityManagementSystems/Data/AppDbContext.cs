@@ -12,6 +12,11 @@ namespace HospitalityManagementSystems.Data
 
         public DbSet<Appointments> Appointments { get; set; }
 
+        public DbSet<Prescription> Prescription { get; set; }
+
+        public DbSet<MedicalRecord> MedicalRecord { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -27,6 +32,20 @@ namespace HospitalityManagementSystems.Data
                 .WithMany(u => u.PatientAppointments)
                 .HasForeignKey(a => a.PatientId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<MedicalRecord>()
+                .HasOne(m => m.Doctor)
+                .WithMany(u => u.DoctorMedicalRecords)
+                .HasForeignKey(m => m.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<MedicalRecord>()
+                .HasOne(m => m.Patient)
+                .WithMany(u => u.PatientMedicalRecords)
+                .HasForeignKey(m => m.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
         }
     }
 }
