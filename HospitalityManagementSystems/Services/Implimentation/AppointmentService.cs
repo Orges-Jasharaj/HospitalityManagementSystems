@@ -13,9 +13,10 @@ namespace HospitalityManagementSystems.Services.Implimentation
         private readonly AppDbContext _context;
         private readonly ILogger<AppointmentService> _logger;
 
-        public AppointmentService(AppDbContext context)
+        public AppointmentService(AppDbContext context,ILogger<AppointmentService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
 
@@ -104,7 +105,10 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     AppointmentDate = a.AppointmentDate,
                     Reason = a.Reason,
                     Status = a.Status,
-                    CreatedBy = a.PatientId
+                    CreatedBy = a.CreatedBy,
+                    CreatedDate = a.CreatedDate,
+                    UpdatedBy = a.UpdatedBy,
+                    UpdatedDate = a.UpdatedDate,
                 }).ToListAsync();
 
             return ResponseDto<List<AppointmentsDto>>.SuccessResponse(appointments);
@@ -209,6 +213,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
             appointment.Reason = updateDto.Reason;
             appointment.Status = updateDto.Status;
             appointment.UpdatedBy = updateDto.PatientId;
+            appointment.UpdatedDate = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
             _logger.LogInformation($"Appointment with this id {id} is been updated successfully by {updateDto.PatientId}");
