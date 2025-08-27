@@ -43,7 +43,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
                 var userExisits = await _userManager.FindByEmailAsync(createUserDto.Email);
                 if (userExisits != null)
                 {
-                    _logger.LogWarning($"Attempt to create user with existing email {createUserDto.Email}");
+                    _logger.LogInformation($"Attempt to create user with existing email {createUserDto.Email}");
                     return ResponseDto<bool>.Failure("User already exists");
                 }
                 var user = new User
@@ -194,7 +194,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
                 ErrorMessage = e.Description
             }).ToList();
 
-            _logger.LogWarning($"Failed to update user {user.Email}: {string.Join(", ", errors.Select(err => err.ErrorMessage))}");
+            _logger.LogInformation($"Failed to update user {user.Email}: {string.Join(", ", errors.Select(err => err.ErrorMessage))}");
             return ResponseDto<bool>.Failure("User update failed.", errors);
         }
 
