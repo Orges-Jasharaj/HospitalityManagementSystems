@@ -4,12 +4,14 @@ using HospitalityManagementSystems.Dtos.Requests;
 using HospitalityManagementSystems.Dtos.Responses;
 using HospitalityManagementSystems.Services.Interface;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace HospitalityManagementSystems.Services.Implimentation
 {
     public class AppointmentService : IAppointment
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<AppointmentService> _logger;
 
         public AppointmentService(AppDbContext context)
         {
@@ -34,6 +36,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
             var doctor = await _context.Users.FirstOrDefaultAsync(u => u.Id == createAppointmentsDto.DoctorId);
             if (doctor == null)
             {
+                _logger.LogInformation($"Patient with this id {createAppointmentsDto.PatientId} is trying to make an appointment with this doctor id {createAppointmentsDto.DoctorId}");
                 return ResponseDto<bool>.Failure(
                     message: "Doctor not found",
                     errors: new List<ApiError>
@@ -56,7 +59,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
 
             _context.Appointments.Add(appointment);
             await _context.SaveChangesAsync();
-
+            _logger.LogInformation($"Appointment created with ID: {appointment.Id} in this date {appointment.CreatedDate} by {appointment.PatientId}");
             return ResponseDto<bool>.SuccessResponse(true, "Appointment created successfully");
         }
 
@@ -81,6 +84,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
             }
             _context.Appointments.Remove(appointment);
             await _context.SaveChangesAsync( );
+            _logger.LogInformation($"Appointment with id : {id} has been deleted by {appointment.PatientId}");
 
             return ResponseDto<bool>.SuccessResponse(true, "Appointment has been deleted successfully");
         }
@@ -151,6 +155,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
 
             if (appointment == null)
             {
+                _logger.LogInformation($"Appointment with this id {id} could not be found");
                 return ResponseDto<bool>.Failure(
                     message: "Appointment not found",
                     errors: new List<ApiError>
@@ -167,6 +172,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
             var patient = await _context.Users.FirstOrDefaultAsync(u => u.Id == updateDto.PatientId);
             if (patient == null)
             {
+                _logger.LogInformation($"No patient found with Id {updateDto.PatientId}");
                 return ResponseDto<bool>.Failure(
                     message: "Patient not found",
                     errors: new List<ApiError>
@@ -183,6 +189,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
             var doctor = await _context.Users.FirstOrDefaultAsync(u => u.Id == updateDto.DoctorId);
             if (doctor == null)
             {
+                _logger.LogInformation($"No doctor found with Id {updateDto.DoctorId}");
                 return ResponseDto<bool>.Failure(
                     message: "Doctor not found",
                     errors: new List<ApiError>
@@ -191,7 +198,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
                 {
                     ErrorCode = "DOCTOR_NOT_FOUND",
                     ErrorMessage = $"No doctor exists with Id {updateDto.DoctorId}"
-                }
+                     }
                     }
                 );
             }
@@ -204,7 +211,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
             appointment.UpdatedBy = updateDto.PatientId;
 
             await _context.SaveChangesAsync();
-
+            _logger.LogInformation($"Appointment with this id {id} is been updated successfully by {updateDto.PatientId}");
             return ResponseDto<bool>.SuccessResponse(true, "Appointment updated successfully");
         }
 
