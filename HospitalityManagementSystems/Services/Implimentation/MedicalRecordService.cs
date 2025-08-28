@@ -91,6 +91,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
             var medicals = await _context.MedicalRecord
                 .Include(a => a.Patient)
                 .Include(a => a.Doctor)
+                .Include(a => a.Prescriptions)
                 .Select(a => new  MedicalRecordDto
                 {
                     Id = a.Id,
@@ -104,6 +105,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     CreatedDate = a.CreatedDate,
                     UpdatedBy = a.UpdatedBy,
                     UpdatedDate = a.UpdatedDate,
+                    Prescriptions = a.Prescriptions
                 }).ToListAsync();
 
             return ResponseDto<List<MedicalRecordDto>>.SuccessResponse(medicals);
@@ -115,6 +117,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
             var medical = await _context.MedicalRecord
                 .Include(a => a.Patient)
                 .Include(a => a.Doctor)
+                .Include(a => a.Prescriptions)
                 .FirstOrDefaultAsync(a => a.Id == id);
 
             if (medical == null)
@@ -145,6 +148,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
                 CreatedDate = medical.CreatedDate,
                 UpdatedBy = medical.UpdatedBy,
                 UpdatedDate = medical.UpdatedDate,
+                Prescriptions = medical.Prescriptions
             };
 
             return ResponseDto<MedicalRecordDto>.SuccessResponse(medicalDto);

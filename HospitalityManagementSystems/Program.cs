@@ -44,6 +44,7 @@ namespace HospitalityManagementSystems
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IAppointment, AppointmentService>();
             builder.Services.AddScoped<IMedicalRecord, MedicalRecordService>();
+            builder.Services.AddScoped<IPrescription, PrescriptionService>();
 
 
             builder.Services.AddSwaggerGen(c =>

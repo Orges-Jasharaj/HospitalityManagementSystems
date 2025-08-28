@@ -45,6 +45,12 @@ namespace HospitalityManagementSystems.Data
                 .HasForeignKey(m => m.PatientId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<Prescription>()
+                .HasOne(p => p.MedicalRecord)
+                .WithMany(m => m.Prescriptions)
+                .HasForeignKey(p => p.MedicalRecordId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
         }
     }
