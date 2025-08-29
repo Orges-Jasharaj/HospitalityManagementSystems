@@ -4,12 +4,13 @@ using HospitalityManagementSystems.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using HospitalityManagementSystems.Data.Models;
 
-namespace HospitalityManagementSystems.Controllers
-{
+namespace HospitalityManagementSystems.Controllers{
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
+   [Authorize(Roles = RoleTypes.User)]
     public class AppointmentsController : ControllerBase
     {
         private readonly IAppointment _appointmentServices;

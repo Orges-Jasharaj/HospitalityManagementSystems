@@ -59,7 +59,9 @@ namespace HospitalityManagementSystems.Services.Implimentation
                 if (result.Succeeded)
                 {
                     _logger.LogInformation($"User {user.Email} created successfully");
+                    await _userManager.AddToRoleAsync(user, RoleTypes.User);
                     return ResponseDto<bool>.SuccessResponse(true, "User created successfully");
+
                 }
                 var errors = result.Errors.Select(e => new ApiError
                 {
