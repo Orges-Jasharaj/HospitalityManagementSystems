@@ -114,6 +114,87 @@ namespace HospitalityManagementSystems.Services.Implimentation
             return ResponseDto<List<AppointmentsDto>>.SuccessResponse(appointments);
         }
 
+        public async Task<ResponseDto<List<AppointmentsDto>>> GetAllAppointmentsByDoctorIdAsync(string doctorId)
+        {
+            var appointments = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .Where(a => a.DoctorId == doctorId)
+                .Select(a => new AppointmentsDto
+                {
+                    Id = a.Id,
+                    PatientId = a.PatientId,
+                    Patient = a.Patient,
+                    DoctorId = a.DoctorId,
+                    Doctor = a.Doctor,
+                    AppointmentDate = a.AppointmentDate,
+                    Reason = a.Reason,
+                    Status = a.Status,
+                    CreatedBy = a.CreatedBy,
+                    CreatedDate = a.CreatedDate,
+                    UpdatedBy = a.UpdatedBy,
+                    UpdatedDate = a.UpdatedDate,
+                })
+                .ToListAsync();
+
+            if (!appointments.Any())
+            {
+                return ResponseDto<List<AppointmentsDto>>.Failure(
+                    message: "No appointments found for this doctor",
+                    errors: new List<ApiError>
+                    {
+                new ApiError
+                {
+                    ErrorCode = "APPOINTMENT_NOT_FOUND",
+                    ErrorMessage = $"No appointments found for doctor with Id {doctorId}"
+                }
+                    }
+                );
+            }
+
+            return ResponseDto<List<AppointmentsDto>>.SuccessResponse(appointments);
+        }
+
+        public async Task<ResponseDto<List<AppointmentsDto>>> GetAllAppointmentsByPatientIdAsync(string patientId)
+        {
+            var appointments = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .Where(a => a.PatientId == patientId)
+                .Select(a => new AppointmentsDto
+                {
+                    Id = a.Id,
+                    PatientId = a.PatientId,
+                    Patient = a.Patient,
+                    DoctorId = a.DoctorId,
+                    Doctor = a.Doctor,
+                    AppointmentDate = a.AppointmentDate,
+                    Reason = a.Reason,
+                    Status = a.Status,
+                    CreatedBy = a.CreatedBy,
+                    CreatedDate = a.CreatedDate,
+                    UpdatedBy = a.UpdatedBy,
+                    UpdatedDate = a.UpdatedDate,
+                })
+                .ToListAsync();
+
+            if (!appointments.Any())
+            {
+                return ResponseDto<List<AppointmentsDto>>.Failure(
+                    message: "No appointments found for this patient",
+                    errors: new List<ApiError>
+                    {
+                new ApiError
+                {
+                    ErrorCode = "APPOINTMENT_NOT_FOUND",
+                    ErrorMessage = $"No appointments found for patient with Id {patientId}"
+                }
+                    }
+                );
+            }
+
+            return ResponseDto<List<AppointmentsDto>>.SuccessResponse(appointments);
+        }
 
         public async Task<ResponseDto<AppointmentsDto>> GetAppointmentByIdAsync(int id)
         {

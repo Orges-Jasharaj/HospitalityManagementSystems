@@ -11,6 +11,11 @@ namespace HospitalityManagementSystems.Services.Interface
 
         Task<ResponseDto<List<AppointmentsDto>>> GetAllAppointmentsAsync();
         Task<ResponseDto<AppointmentsDto>> GetAppointmentByIdAsync(int id);
-        
+
+        Task<ResponseDto<List<AppointmentsDto>>> GetAllAppointmentsByPatientIdAsync(string doctorid);
+
+        Task<ResponseDto<List<AppointmentsDto>>> GetAllAppointmentsByDoctorIdAsync(string patientid);
+
+
     }
 }

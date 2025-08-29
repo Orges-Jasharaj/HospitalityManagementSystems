@@ -19,7 +19,7 @@ namespace HospitalityManagementSystems.Controllers{
         }
 
         [HttpGet]
-        [Authorize(Roles = $"{RoleTypes.User},{RoleTypes.Admin},{RoleTypes.Doctor},{RoleTypes.SuperAdmin},{RoleTypes.Administrator}")]
+        [Authorize(Roles = $"{RoleTypes.Admin},{RoleTypes.SuperAdmin},{RoleTypes.Administrator}")]
         public async Task<IActionResult> GetAllAppointments()
         {
             var response = await _appointmentServices.GetAllAppointmentsAsync();
@@ -36,6 +36,32 @@ namespace HospitalityManagementSystems.Controllers{
 
             return Ok(response);
         }
+
+        [HttpGet("patientid")]
+        [Authorize(Roles = RoleTypes.User)]
+        public async Task<IActionResult> GetAllAppointmentsByPatientId()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(ResponseDto<bool>.Failure("Unauthorized: user id not found"));
+
+            var response = await _appointmentServices.GetAllAppointmentsByPatientIdAsync(userId);
+            return Ok(response);
+        }
+
+        [HttpGet("doctorid")]
+        [Authorize(Roles = RoleTypes.Doctor)]
+        public async Task<IActionResult> GetAllAppointmentsByDoctorId()
+        {
+            var doctorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(doctorId))
+                return Unauthorized(ResponseDto<bool>.Failure("Unauthorized: doctor id not found"));
+
+            var response = await _appointmentServices.GetAllAppointmentsByDoctorIdAsync(doctorId);
+            return Ok(response);
+        }
+
+
 
         [HttpPost]
         [Authorize(Roles = $"{RoleTypes.User}")]
@@ -56,7 +82,7 @@ namespace HospitalityManagementSystems.Controllers{
 
 
         [HttpPut("{id}")]
-        [Authorize(Roles = $"{RoleTypes.User}")]
+        [Authorize(Roles = $"{RoleTypes.User},{RoleTypes.Administrator}")]
         public async Task<IActionResult> UpdateAppointment(int id, [FromBody] CreateAppointmentsDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
