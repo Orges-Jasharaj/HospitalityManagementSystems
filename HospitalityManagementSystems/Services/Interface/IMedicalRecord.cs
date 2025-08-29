@@ -11,5 +11,9 @@ namespace HospitalityManagementSystems.Services.Interface
         Task<ResponseDto<bool>> DeleteMedicalRecordAsync(int id);
         Task<ResponseDto<List<MedicalRecordDto>>> GetAllMedicalRecordsAsync();
         Task<ResponseDto<MedicalRecordDto>> GetMedicalRecordsByIdAsync(int id);
+
+        Task<ResponseDto<List<MedicalRecordDto>>> GetAllMedicalRecordsByPatientIdAsync(string id);
+        Task<ResponseDto<List<MedicalRecordDto>>> GetAllMedicalRecordsByDoctorIdAsync(string id);
+
     }
 }

@@ -12,6 +12,10 @@ namespace HospitalityManagementSystems.Services.Interface
         Task<ResponseDto<List<PrescriptionDto>>> GetAllPrescriptionsAsync();
         Task<ResponseDto<PrescriptionDto>> GetPrescriptionByIdAsync(int id);
 
+        Task<ResponseDto<List<PrescriptionDto>>> GetPresciptionByPatientId(string patientId);
+
+        Task<ResponseDto<List<PrescriptionDto>>> GetPresciptionByDocotorId(string doctorId);
+
 
     }
 }

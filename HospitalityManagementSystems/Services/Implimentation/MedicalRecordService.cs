@@ -112,6 +112,92 @@ namespace HospitalityManagementSystems.Services.Implimentation
 
         }
 
+        public async Task<ResponseDto<List<MedicalRecordDto>>> GetAllMedicalRecordsByDoctorIdAsync(string doctorId)
+        {
+            var medicalRecords = await _context.MedicalRecord
+                .Include(m => m.Patient)
+                .Include(m => m.Doctor)
+                .Include(m => m.Prescriptions)
+                .Where(m => m.DoctorId == doctorId)
+                .Select(m => new MedicalRecordDto
+                {
+                    Id = m.Id,
+                    PatientId = m.PatientId,
+                    Patient = m.Patient,
+                    DoctorId = m.DoctorId,
+                    Doctor = m.Doctor,
+                    Diagnosis = m.Diagnosis,
+                    Treatment = m.Treatment,
+                    CreatedBy = m.CreatedBy,
+                    CreatedDate = m.CreatedDate,
+                    UpdatedBy = m.UpdatedBy,
+                    UpdatedDate = m.UpdatedDate,
+                    Prescriptions = m.Prescriptions
+                })
+                .ToListAsync();
+
+            if (!medicalRecords.Any())
+            {
+                return ResponseDto<List<MedicalRecordDto>>.Failure(
+                    message: "No medical records found",
+                    errors: new List<ApiError>
+                    {
+                new ApiError
+                {
+                    ErrorCode = "MEDICALRECORD_NOT_FOUND",
+                    ErrorMessage = $"No medical records exist for doctor with Id {doctorId}"
+                }
+                    }
+                );
+            }
+
+            return ResponseDto<List<MedicalRecordDto>>.SuccessResponse(medicalRecords);
+        }
+
+
+        public async Task<ResponseDto<List<MedicalRecordDto>>> GetAllMedicalRecordsByPatientIdAsync(string patientId)
+        {
+            var medicalRecords = await _context.MedicalRecord
+                .Include(m => m.Patient)
+                .Include(m => m.Doctor)
+                .Include(m => m.Prescriptions)
+                .Where(m => m.PatientId == patientId)
+                .Select(m => new MedicalRecordDto
+                {
+                    Id = m.Id,
+                    PatientId = m.PatientId,
+                    Patient = m.Patient,
+                    DoctorId = m.DoctorId,
+                    Doctor = m.Doctor,
+                    Diagnosis = m.Diagnosis,
+                    Treatment = m.Treatment,
+                    CreatedBy = m.CreatedBy,
+                    CreatedDate = m.CreatedDate,
+                    UpdatedBy = m.UpdatedBy,
+                    UpdatedDate = m.UpdatedDate,
+                    Prescriptions = m.Prescriptions
+                })
+                .ToListAsync();
+
+            if (!medicalRecords.Any())
+            {
+                return ResponseDto<List<MedicalRecordDto>>.Failure(
+                    message: "No medical records found",
+                    errors: new List<ApiError>
+                    {
+                new ApiError
+                {
+                    ErrorCode = "MEDICALRECORD_NOT_FOUND",
+                    ErrorMessage = $"No medical records exist for patient with Id {patientId}"
+                }
+                    }
+                );
+            }
+
+            return ResponseDto<List<MedicalRecordDto>>.SuccessResponse(medicalRecords);
+        }
+
+
         public async Task<ResponseDto<MedicalRecordDto>> GetMedicalRecordsByIdAsync(int id)
         {
             var medical = await _context.MedicalRecord

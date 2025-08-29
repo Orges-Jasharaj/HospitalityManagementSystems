@@ -1,4 +1,5 @@
-﻿using HospitalityManagementSystems.Data.Models;
+﻿using Hangfire;
+using HospitalityManagementSystems.Data.Models;
 using HospitalityManagementSystems.Dtos.Requests;
 using HospitalityManagementSystems.Dtos.Responses;
 using HospitalityManagementSystems.Services.Interface;
@@ -60,6 +61,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
                 {
                     _logger.LogInformation($"User {user.Email} created successfully");
                     await _userManager.AddToRoleAsync(user, RoleTypes.User);
+                    BackgroundJob.Enqueue(() => SendEmail(createUserDto.FirstName, createUserDto.Email));
                     return ResponseDto<bool>.SuccessResponse(true, "User created successfully");
 
                 }
@@ -79,6 +81,15 @@ namespace HospitalityManagementSystems.Services.Implimentation
             }
 
         }
+
+        [AutomaticRetry(Attempts = 3)]
+        public async Task<bool> SendEmail(string FirstName, string email)
+        {
+         await Task.Delay(2000);
+            Console.WriteLine($"Email sent to {FirstName} with email {email}");
+            return true;
+        }
+
 
         public async Task<ResponseDto<bool>> DeleteUserAsync(string userId)
         {

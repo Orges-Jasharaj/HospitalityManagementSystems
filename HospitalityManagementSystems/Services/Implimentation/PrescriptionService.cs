@@ -93,6 +93,68 @@ namespace HospitalityManagementSystems.Services.Implimentation
             return ResponseDto<List<PrescriptionDto>>.SuccessResponse(prescrption);
         }
 
+        public async Task<ResponseDto<List<PrescriptionDto>>> GetPresciptionByPatientId(string patientId)
+        {
+            var prescriptions = await _context.Prescription
+                .Include(p => p.MedicalRecord)
+                .Where(p => p.MedicalRecord.PatientId == patientId)
+                .Select(p => new PrescriptionDto
+                {
+                    Id = p.Id,
+                    MedicalRecordId = p.MedicalRecordId,
+                    MedicalRecord = p.MedicalRecord,
+                    MedicineName = p.MedicineName,
+                    Dosage = p.Dosage,
+                    Instructions = p.Instructions,
+                    CreatedBy = p.CreatedBy,
+                    CreatedDate = p.CreatedDate,
+                    UpdatedBy = p.UpdatedBy,
+                    UpdatedDate = p.UpdatedDate
+                })
+                .ToListAsync();
+
+            if (!prescriptions.Any())
+            {
+                return ResponseDto<List<PrescriptionDto>>.Failure(
+                    "No prescriptions found for this patient"
+                );
+            }
+
+            return ResponseDto<List<PrescriptionDto>>.SuccessResponse(prescriptions);
+        }
+
+
+        public async Task<ResponseDto<List<PrescriptionDto>>> GetPresciptionByDocotorId(string doctorId)
+        {
+            var prescriptions = await _context.Prescription
+                .Include(p => p.MedicalRecord)
+                .Where(p => p.MedicalRecord.DoctorId == doctorId)
+                .Select(p => new PrescriptionDto
+                {
+                    Id = p.Id,
+                    MedicalRecordId = p.MedicalRecordId,
+                    MedicalRecord = p.MedicalRecord,
+                    MedicineName = p.MedicineName,
+                    Dosage = p.Dosage,
+                    Instructions = p.Instructions,
+                    CreatedBy = p.CreatedBy,
+                    CreatedDate = p.CreatedDate,
+                    UpdatedBy = p.UpdatedBy,
+                    UpdatedDate = p.UpdatedDate
+                })
+                .ToListAsync();
+
+            if (!prescriptions.Any())
+            {
+                return ResponseDto<List<PrescriptionDto>>.Failure(
+                    "No prescriptions found for this doctor"
+                );
+            }
+
+            return ResponseDto<List<PrescriptionDto>>.SuccessResponse(prescriptions);
+        }
+
+
         public async Task<ResponseDto<PrescriptionDto>> GetPrescriptionByIdAsync(int id)
         {
             var prescrption = await _context.Prescription

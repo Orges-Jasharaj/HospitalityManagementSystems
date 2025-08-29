@@ -9,8 +9,6 @@ using HospitalityManagementSystems.Data.Models;
 namespace HospitalityManagementSystems.Controllers{
     [Route("api/[controller]")]
     [ApiController]
-    
-   [Authorize(Roles = RoleTypes.User)]
     public class AppointmentsController : ControllerBase
     {
         private readonly IAppointment _appointmentServices;
@@ -21,6 +19,7 @@ namespace HospitalityManagementSystems.Controllers{
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{RoleTypes.User},{RoleTypes.Admin},{RoleTypes.Doctor},{RoleTypes.SuperAdmin},{RoleTypes.Administrator}")]
         public async Task<IActionResult> GetAllAppointments()
         {
             var response = await _appointmentServices.GetAllAppointmentsAsync();
@@ -28,6 +27,7 @@ namespace HospitalityManagementSystems.Controllers{
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = $"{RoleTypes.Admin},{RoleTypes.SuperAdmin},{RoleTypes.Administrator}")]
         public async Task<IActionResult> GetAppointmentById(int id)
         {
             var response = await _appointmentServices.GetAppointmentByIdAsync(id);
@@ -38,6 +38,7 @@ namespace HospitalityManagementSystems.Controllers{
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{RoleTypes.User}")]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentsDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -55,6 +56,7 @@ namespace HospitalityManagementSystems.Controllers{
 
 
         [HttpPut("{id}")]
+        [Authorize(Roles = $"{RoleTypes.User}")]
         public async Task<IActionResult> UpdateAppointment(int id, [FromBody] CreateAppointmentsDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -69,6 +71,7 @@ namespace HospitalityManagementSystems.Controllers{
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = $"{RoleTypes.User},{RoleTypes.Administrator}")]
         public async Task<IActionResult> DeleteAppointment(int id)
         {
             var response = await _appointmentServices.DeleteAppointmentAsync(id);
