@@ -1,3 +1,4 @@
+using Hangfire;
 using HospitalityManagementSystems.Data;
 using HospitalityManagementSystems.Data.Models;
 using HospitalityManagementSystems.Dtos.System;
@@ -22,6 +23,17 @@ namespace HospitalityManagementSystems
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddHangfire(conf =>
+            {
+                conf.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            builder.Services.AddHangfireServer(options =>
+            {
+                options.Queues = new[] { "crcital", "default" };
+            });
+
+
 
             builder.Host.UseSerilog((context, configuration) =>
             {
@@ -133,6 +145,8 @@ namespace HospitalityManagementSystems
 
 
             app.MapControllers();
+
+            app.UseHangfireDashboard();
 
             app.Run();
         }
