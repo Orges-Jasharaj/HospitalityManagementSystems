@@ -278,5 +278,181 @@ namespace HospitalityManagementSystems.Services.Implimentation
             return ResponseDto<LoginResponseDto>.SuccessResponse(loginResponse, "Login successful");
 
         }
+
+        public async Task<ResponseDto<bool>> CreateDoctorAsync(CreateUserDto createUserDto)
+        {
+            try
+            {
+                var userExisits = await _userManager.FindByEmailAsync(createUserDto.Email);
+                if (userExisits != null)
+                {
+                    _logger.LogInformation($"Attempt to create user with existing email {createUserDto.Email}");
+                    return ResponseDto<bool>.Failure("User already exists");
+                }
+                var user = new User
+                {
+                    FirstName = createUserDto.FirstName,
+                    LastName = createUserDto.LastName,
+                    DateOfBirth = createUserDto.DateOfBirth
+                };
+                await _userStore.SetUserNameAsync(user, createUserDto.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, createUserDto.Email, CancellationToken.None);
+
+                var result = await _userManager.CreateAsync(user, createUserDto.Password);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation($"User {user.Email} created successfully");
+                    await _userManager.AddToRoleAsync(user, RoleTypes.Doctor);
+                    BackgroundJob.Enqueue(() => SendEmail(createUserDto.FirstName, createUserDto.Email));
+                    return ResponseDto<bool>.SuccessResponse(true, "User created successfully");
+
+                }
+                var errors = result.Errors.Select(e => new ApiError
+                {
+                    ErrorCode = e.Code,
+                    ErrorMessage = e.Description
+                }).ToList();
+
+
+                return ResponseDto<bool>.Failure("User creation failed", errors);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while creating user with email {Email}", createUserDto.Email);
+                return ResponseDto<bool>.Failure("An error occurred while creating user");
+            }
+        }
+
+        public async Task<ResponseDto<bool>> CreateAdminAsync(CreateUserDto createUserDto)
+        {
+            try
+            {
+                var userExisits = await _userManager.FindByEmailAsync(createUserDto.Email);
+                if (userExisits != null)
+                {
+                    _logger.LogInformation($"Attempt to create user with existing email {createUserDto.Email}");
+                    return ResponseDto<bool>.Failure("User already exists");
+                }
+                var user = new User
+                {
+                    FirstName = createUserDto.FirstName,
+                    LastName = createUserDto.LastName,
+                    DateOfBirth = createUserDto.DateOfBirth
+                };
+                await _userStore.SetUserNameAsync(user, createUserDto.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, createUserDto.Email, CancellationToken.None);
+
+                var result = await _userManager.CreateAsync(user, createUserDto.Password);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation($"User {user.Email} created successfully");
+                    await _userManager.AddToRoleAsync(user, RoleTypes.Admin);
+                    BackgroundJob.Enqueue(() => SendEmail(createUserDto.FirstName, createUserDto.Email));
+                    return ResponseDto<bool>.SuccessResponse(true, "User created successfully");
+
+                }
+                var errors = result.Errors.Select(e => new ApiError
+                {
+                    ErrorCode = e.Code,
+                    ErrorMessage = e.Description
+                }).ToList();
+
+
+                return ResponseDto<bool>.Failure("User creation failed", errors);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while creating user with email {Email}", createUserDto.Email);
+                return ResponseDto<bool>.Failure("An error occurred while creating user");
+            }
+        }
+
+        public async Task<ResponseDto<bool>> CreateAdminstratorAsync(CreateUserDto createUserDto)
+        {
+            try
+            {
+                var userExisits = await _userManager.FindByEmailAsync(createUserDto.Email);
+                if (userExisits != null)
+                {
+                    _logger.LogInformation($"Attempt to create user with existing email {createUserDto.Email}");
+                    return ResponseDto<bool>.Failure("User already exists");
+                }
+                var user = new User
+                {
+                    FirstName = createUserDto.FirstName,
+                    LastName = createUserDto.LastName,
+                    DateOfBirth = createUserDto.DateOfBirth
+                };
+                await _userStore.SetUserNameAsync(user, createUserDto.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, createUserDto.Email, CancellationToken.None);
+
+                var result = await _userManager.CreateAsync(user, createUserDto.Password);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation($"User {user.Email} created successfully");
+                    await _userManager.AddToRoleAsync(user, RoleTypes.Administrator);
+                    BackgroundJob.Enqueue(() => SendEmail(createUserDto.FirstName, createUserDto.Email));
+                    return ResponseDto<bool>.SuccessResponse(true, "User created successfully");
+
+                }
+                var errors = result.Errors.Select(e => new ApiError
+                {
+                    ErrorCode = e.Code,
+                    ErrorMessage = e.Description
+                }).ToList();
+
+
+                return ResponseDto<bool>.Failure("User creation failed", errors);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while creating user with email {Email}", createUserDto.Email);
+                return ResponseDto<bool>.Failure("An error occurred while creating user");
+            }
+        }
+
+        public async Task<ResponseDto<bool>> CreateNurseAsync(CreateUserDto createUserDto)
+        {
+            try
+            {
+                var userExisits = await _userManager.FindByEmailAsync(createUserDto.Email);
+                if (userExisits != null)
+                {
+                    _logger.LogInformation($"Attempt to create user with existing email {createUserDto.Email}");
+                    return ResponseDto<bool>.Failure("User already exists");
+                }
+                var user = new User
+                {
+                    FirstName = createUserDto.FirstName,
+                    LastName = createUserDto.LastName,
+                    DateOfBirth = createUserDto.DateOfBirth
+                };
+                await _userStore.SetUserNameAsync(user, createUserDto.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, createUserDto.Email, CancellationToken.None);
+
+                var result = await _userManager.CreateAsync(user, createUserDto.Password);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation($"User {user.Email} created successfully");
+                    await _userManager.AddToRoleAsync(user, RoleTypes.Nurse);
+                    BackgroundJob.Enqueue(() => SendEmail(createUserDto.FirstName, createUserDto.Email));
+                    return ResponseDto<bool>.SuccessResponse(true, "User created successfully");
+
+                }
+                var errors = result.Errors.Select(e => new ApiError
+                {
+                    ErrorCode = e.Code,
+                    ErrorMessage = e.Description
+                }).ToList();
+
+
+                return ResponseDto<bool>.Failure("User creation failed", errors);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while creating user with email {Email}", createUserDto.Email);
+                return ResponseDto<bool>.Failure("An error occurred while creating user");
+            }
+        }
     }
 }

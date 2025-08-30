@@ -1,6 +1,7 @@
 using Hangfire;
 using HospitalityManagementSystems.Data;
 using HospitalityManagementSystems.Data.Models;
+using HospitalityManagementSystems.Data.Seed;
 using HospitalityManagementSystems.Dtos.System;
 using HospitalityManagementSystems.Middleware;
 using HospitalityManagementSystems.Services.Implimentation;
@@ -123,6 +124,8 @@ namespace HospitalityManagementSystems
             builder.Services.AddOpenApi();
 
             var app = builder.Build();
+
+            SeedData.InitializeAsync(app.Services).GetAwaiter().GetResult();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
