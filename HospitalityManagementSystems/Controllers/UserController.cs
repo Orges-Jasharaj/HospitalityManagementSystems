@@ -1,4 +1,5 @@
-﻿using HospitalityManagementSystems.Dtos.Requests;
+﻿using HospitalityManagementSystems.Data.Models;
+using HospitalityManagementSystems.Dtos.Requests;
 using HospitalityManagementSystems.Dtos.Responses;
 using HospitalityManagementSystems.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +11,6 @@ namespace HospitalityManagementSystems.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUser _userService;
@@ -23,7 +23,7 @@ namespace HospitalityManagementSystems.Controllers
         }
 
         [HttpGet("all")]
-        //[Authorize(Roles = "Admin")] 
+        [Authorize(Roles = $"{RoleTypes.SuperAdmin},{RoleTypes.Administrator},{RoleTypes.Admin}")]
         [Authorize]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -32,6 +32,7 @@ namespace HospitalityManagementSystems.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = $"{RoleTypes.SuperAdmin},{RoleTypes.Administrator},{RoleTypes.Admin}")]
         public async Task<IActionResult> GetUserById(string id)
         {
             var result = await _userService.GetUserByIdAsync(int.Parse(id));
@@ -39,6 +40,7 @@ namespace HospitalityManagementSystems.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = $"{RoleTypes.SuperAdmin},{RoleTypes.Administrator},{RoleTypes.Admin}")]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] UpdateUserDto updateUserDto)
         {
             var result = await _userService.UpdateUserAsync(id, updateUserDto);
@@ -46,7 +48,8 @@ namespace HospitalityManagementSystems.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")] 
+        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = $"{RoleTypes.SuperAdmin},{RoleTypes.Administrator},{RoleTypes.Admin}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var result = await _userService.DeleteUserAsync(id);
@@ -54,6 +57,7 @@ namespace HospitalityManagementSystems.Controllers
         }
 
         [HttpPost("changepassword")]
+        [Authorize(Roles = $"{RoleTypes.User},{RoleTypes.Administrator},{RoleTypes.SuperAdmin}")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -63,10 +67,10 @@ namespace HospitalityManagementSystems.Controllers
             return Ok(result);
         }
 
-        [HttpGet("logger")]
-        public IActionResult GetLogger()
-        {
-            throw new Exception("This is a test exception for logging purposes");
-        }
+        //[HttpGet("logger")]
+        //public IActionResult GetLogger()
+        //{
+        //    throw new Exception("This is a test exception for logging purposes");
+        //}
     }
 }

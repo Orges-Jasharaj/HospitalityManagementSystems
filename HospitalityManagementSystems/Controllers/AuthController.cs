@@ -1,4 +1,5 @@
-﻿using HospitalityManagementSystems.Dtos.Requests;
+﻿using HospitalityManagementSystems.Data.Models;
+using HospitalityManagementSystems.Dtos.Requests;
 using HospitalityManagementSystems.Dtos.Responses;
 using HospitalityManagementSystems.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
@@ -19,9 +20,41 @@ namespace HospitalityManagementSystems.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] CreateUserDto createUserDto)
+        public async Task<IActionResult> RegisterUser([FromBody] CreateUserDto createUserDto)
         {
             var result = await _userService.CreateUserAsync(createUserDto);
+            return Ok(result);
+        }
+
+        [HttpPost("registerDoctor")]
+        [Authorize(Roles = $"{RoleTypes.Admin},{RoleTypes.SuperAdmin}")]
+        public async Task<IActionResult> RegisterDoctor([FromBody] CreateUserDto createUserDto)
+        {
+            var result = await _userService.CreateDoctorAsync(createUserDto);
+            return Ok(result);
+        }
+
+        [HttpPost("registerAdmin")]
+        [Authorize(Roles = $"{RoleTypes.SuperAdmin}")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] CreateUserDto createUserDto)
+        {
+            var result = await _userService.CreateAdminAsync(createUserDto);
+            return Ok(result);
+        }
+
+        [HttpPost("registerNurse")]
+        [Authorize(Roles = $"{RoleTypes.Admin},{RoleTypes.SuperAdmin}")]
+        public async Task<IActionResult> RegisterNurse([FromBody] CreateUserDto createUserDto)
+        {
+            var result = await _userService.CreateNurseAsync(createUserDto);
+            return Ok(result);
+        }
+
+        [HttpPost("registerAdminstrator")]
+        [Authorize(Roles = $"{RoleTypes.Admin},{RoleTypes.SuperAdmin}")]
+        public async Task<IActionResult> RegisterAdminstrator([FromBody] CreateUserDto createUserDto)
+        {
+            var result = await _userService.CreateAdminstratorAsync(createUserDto);
             return Ok(result);
         }
 
