@@ -16,6 +16,8 @@ namespace HospitalityManagementSystems.Data
 
         public DbSet<MedicalRecord> MedicalRecord { get; set; }
 
+        public DbSet<Payment> Payments { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -48,6 +50,12 @@ namespace HospitalityManagementSystems.Data
             builder.Entity<Prescription>()
                 .HasOne(p => p.MedicalRecord)
                 .WithMany(m => m.Prescriptions)
+                .HasForeignKey(p => p.MedicalRecordId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Payment>()
+                .HasOne(p => p.MedicalRecord)
+                .WithMany(m => m.Payments)
                 .HasForeignKey(p => p.MedicalRecordId)
                 .OnDelete(DeleteBehavior.Restrict);
 

@@ -23,6 +23,8 @@ namespace HospitalityManagementSystems.Data.Models
         public string? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public ICollection<Prescription> Prescriptions { get; set; }
+        public ICollection<Payment> Payments { get; set; }
+
     }
 
 }
