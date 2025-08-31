@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HospitalityManagementSystems.Data.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HospitalityManagementSystems.Data.Models
+namespace HospitalityManagementSystems.Dtos.Responses
 {
-    public class Payment
+    public class PaymentDto
     {
         [Key]
         public int Id { get; set; }
@@ -19,12 +20,12 @@ namespace HospitalityManagementSystems.Data.Models
         public decimal Amount { get; set; }
 
         [Required]
-        public string PaymentMethod { get; set; } 
+        public string PaymentMethod { get; set; }
 
         [Required]
-        public string Status { get; set; } = "Pending"; 
+        public string Status { get; set; } = "Pending";
 
-        public DateTime? CompletedDate { get; set; } 
+        public DateTime? CompletedDate { get; set; }
 
         public string? Notes { get; set; }
 
