@@ -11,7 +11,7 @@ namespace HospitalityManagementSystems.Services.Interface
         Task<ResponseDto<bool>> CreateAdminstratorAsync(CreateUserDto createUserDto);
         Task<ResponseDto<bool>> CreateNurseAsync(CreateUserDto createUserDto);
         Task<ResponseDto<LoginResponseDto>> LoginAsync(LoginDto loginDto);
-        Task<ResponseDto<UserDto>> GetUserByIdAsync(int userId);
+        Task<ResponseDto<UserDto>> GetUserByIdAsync(string userId);
         Task<ResponseDto<List<UserDto>>> GetAllUsersAsync();
         Task<ResponseDto<bool>> DeleteUserAsync(string userId);
         Task<ResponseDto<bool>> UpdateUserAsync(string userId, UpdateUserDto userDto);

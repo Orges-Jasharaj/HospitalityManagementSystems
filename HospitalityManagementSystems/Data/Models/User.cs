@@ -9,6 +9,7 @@ namespace HospitalityManagementSystems.Data.Models
         public DateTime DateOfBirth { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
+        public int? DepartamentId { get; set; }
         public ICollection<Appointments> DoctorAppointments { get; set; }
         public ICollection<Appointments> PatientAppointments { get; set; }
         public ICollection<MedicalRecord> DoctorMedicalRecords { get; set; }

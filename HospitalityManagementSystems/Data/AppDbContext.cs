@@ -17,6 +17,7 @@ namespace HospitalityManagementSystems.Data
         public DbSet<MedicalRecord> MedicalRecord { get; set; }
 
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Department> Departaments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -59,6 +60,7 @@ namespace HospitalityManagementSystems.Data
                 .HasForeignKey(p => p.MedicalRecordId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            
 
         }
     }

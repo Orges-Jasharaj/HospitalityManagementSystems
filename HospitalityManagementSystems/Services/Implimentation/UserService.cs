@@ -51,7 +51,9 @@ namespace HospitalityManagementSystems.Services.Implimentation
                 {
                     FirstName = createUserDto.FirstName,
                     LastName = createUserDto.LastName,
-                    DateOfBirth = createUserDto.DateOfBirth
+                    DateOfBirth = createUserDto.DateOfBirth,
+                    
+
                 };
                 await _userStore.SetUserNameAsync(user, createUserDto.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, createUserDto.Email, CancellationToken.None);
@@ -124,11 +126,14 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     DateOfBirth = u.DateOfBirth,
-                    Email = u.Email
+                    Email = u.Email,
+                    DepartamentId = u.DepartamentId.HasValue ? u.DepartamentId.Value : 0
+
+
                 }).ToList(), "Users retrieved successfully.");
         }
 
-        public async Task<ResponseDto<UserDto>> GetUserByIdAsync(int userId)
+        public async Task<ResponseDto<UserDto>> GetUserByIdAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
@@ -141,7 +146,8 @@ namespace HospitalityManagementSystems.Services.Implimentation
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 DateOfBirth = user.DateOfBirth,
-                Email = user.Email
+                Email = user.Email,
+                DepartamentId = (int)user.DepartamentId
             };
             return ResponseDto<UserDto>.SuccessResponse(userDto, "User retrieved successfully.");
 
@@ -192,6 +198,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
             user.FirstName = userDto.FirstName;
             user.LastName = userDto.LastName;
             user.DateOfBirth = userDto.DateOfBirth;
+            user.DepartamentId = userDto.DepartamentId;
 
             var result = await _userManager.UpdateAsync(user);
 
@@ -293,7 +300,8 @@ namespace HospitalityManagementSystems.Services.Implimentation
                 {
                     FirstName = createUserDto.FirstName,
                     LastName = createUserDto.LastName,
-                    DateOfBirth = createUserDto.DateOfBirth
+                    DateOfBirth = createUserDto.DateOfBirth,
+                    DepartamentId = createUserDto.DepartamentId
                 };
                 await _userStore.SetUserNameAsync(user, createUserDto.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, createUserDto.Email, CancellationToken.None);
@@ -425,7 +433,8 @@ namespace HospitalityManagementSystems.Services.Implimentation
                 {
                     FirstName = createUserDto.FirstName,
                     LastName = createUserDto.LastName,
-                    DateOfBirth = createUserDto.DateOfBirth
+                    DateOfBirth = createUserDto.DateOfBirth,
+                    DepartamentId = createUserDto.DepartamentId
                 };
                 await _userStore.SetUserNameAsync(user, createUserDto.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, createUserDto.Email, CancellationToken.None);

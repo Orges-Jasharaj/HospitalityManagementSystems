@@ -10,6 +10,7 @@ namespace HospitalityManagementSystems.Dtos.Requests
         public string LastName { get; set; }
         [Required]
         public DateTime DateOfBirth { get; set; }
+        public int DepartamentId { get; set; }
     }
 }
 

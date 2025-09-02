@@ -126,6 +126,11 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     Patient = m.Patient,
                     DoctorId = m.DoctorId,
                     Doctor = m.Doctor,
+                    //Doctor = { 
+                    //    FirstName = m.Doctor.FirstName,
+                    //    LastName = m.Doctor.LastName,
+                    //    Email = m.Doctor.Email,
+                    //},
                     Diagnosis = m.Diagnosis,
                     Treatment = m.Treatment,
                     CreatedBy = m.CreatedBy,

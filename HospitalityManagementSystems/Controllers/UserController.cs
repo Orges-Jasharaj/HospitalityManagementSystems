@@ -35,7 +35,7 @@ namespace HospitalityManagementSystems.Controllers
         [Authorize(Roles = $"{RoleTypes.SuperAdmin},{RoleTypes.Administrator},{RoleTypes.Admin}")]
         public async Task<IActionResult> GetUserById(string id)
         {
-            var result = await _userService.GetUserByIdAsync(int.Parse(id));
+            var result = await _userService.GetUserByIdAsync((id));
             return Ok(result);
         }
 
