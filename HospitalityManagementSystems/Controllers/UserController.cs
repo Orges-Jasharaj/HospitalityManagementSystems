@@ -22,14 +22,17 @@ namespace HospitalityManagementSystems.Controllers
             _logger = logger;
         }
 
-        [HttpGet("all")]
-        [Authorize(Roles = $"{RoleTypes.SuperAdmin},{RoleTypes.Administrator},{RoleTypes.Admin}")]
-        [Authorize]
+        [Authorize(Roles = $"{RoleTypes.Admin},{RoleTypes.SuperAdmin},{RoleTypes.Administrator}")]
+        [HttpGet("users")]
         public async Task<IActionResult> GetAllUsers()
         {
-            var result = await _userService.GetAllUsersAsync();
-            return Ok(result);
+            var response = await _userService.GetAllUsersAsync(User);
+            if (!response.Success)
+                return BadRequest(response);
+
+            return Ok(response);
         }
+
 
         [HttpGet("{id}")]
         [Authorize(Roles = $"{RoleTypes.SuperAdmin},{RoleTypes.Administrator},{RoleTypes.Admin}")]

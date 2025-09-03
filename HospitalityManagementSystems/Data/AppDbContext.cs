@@ -24,6 +24,8 @@ namespace HospitalityManagementSystems.Data
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<User>().HasQueryFilter(u => u.isActive);
+
             builder.Entity<Appointments>()
                 .HasOne(a => a.Doctor)
                 .WithMany(u => u.DoctorAppointments)
@@ -59,9 +61,7 @@ namespace HospitalityManagementSystems.Data
                 .WithMany(m => m.Payments)
                 .HasForeignKey(p => p.MedicalRecordId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            
-
         }
+
     }
 }

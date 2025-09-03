@@ -1,9 +1,11 @@
 ﻿using Hangfire;
+using HospitalityManagementSystems.Data;
 using HospitalityManagementSystems.Data.Models;
 using HospitalityManagementSystems.Dtos.Requests;
 using HospitalityManagementSystems.Dtos.Responses;
 using HospitalityManagementSystems.Services.Interface;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using ToDoWebAPI.Service.Interface;
 
@@ -17,6 +19,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
         private readonly SignInManager<User> _signInManager;
         private readonly ITokenService _tokenService;
         private readonly ILogger<UserService> _logger;
+        private readonly AppDbContext _appDbContext;
 
         public UserService(
             UserManager<User> userManager,
@@ -24,7 +27,8 @@ namespace HospitalityManagementSystems.Services.Implimentation
             IUserEmailStore<User> emailStore,
             SignInManager<User> signInManager,
             ITokenService tokenService,
-            ILogger<UserService> logger)
+            ILogger<UserService> logger,
+            AppDbContext appDbContext)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -32,6 +36,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
             _signInManager = signInManager;
             _tokenService = tokenService;
             _logger = logger;
+            _appDbContext = appDbContext;
         }
 
 
@@ -52,7 +57,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     FirstName = createUserDto.FirstName,
                     LastName = createUserDto.LastName,
                     DateOfBirth = createUserDto.DateOfBirth,
-                    
+                    isActive = true,
 
                 };
                 await _userStore.SetUserNameAsync(user, createUserDto.Email, CancellationToken.None);
@@ -92,6 +97,30 @@ namespace HospitalityManagementSystems.Services.Implimentation
             return true;
         }
 
+        //hard delete 
+        //public async Task<ResponseDto<bool>> DeleteUserAsync(string userId)
+        //{
+        //    var user = await _userManager.FindByIdAsync(userId.ToString());
+        //    if (user == null)
+        //    {
+        //        return ResponseDto<bool>.Failure("User not found.");
+        //    }
+
+        //    var result = await _userManager.DeleteAsync(user);
+        //    if (result.Succeeded)
+        //    {
+        //        _logger.LogInformation($"User {user.Email} deleted successfully");
+        //        return ResponseDto<bool>.SuccessResponse(true, "User deleted successfully.");
+        //    }
+        //    var errors = result.Errors.Select(e => new ApiError
+        //    {
+        //        ErrorCode = e.Code,
+        //        ErrorMessage = e.Description
+        //    }).ToList();
+
+        //    _logger.LogWarning($"Failed to delete user {user.Email}: {string.Join(", ", errors.Select(err => err.ErrorMessage))}");
+        //    return ResponseDto<bool>.Failure("User deletion failed.", errors);
+        //}
 
         public async Task<ResponseDto<bool>> DeleteUserAsync(string userId)
         {
@@ -101,37 +130,106 @@ namespace HospitalityManagementSystems.Services.Implimentation
                 return ResponseDto<bool>.Failure("User not found.");
             }
 
-            var result = await _userManager.DeleteAsync(user);
+            user.isActive = false;
+            var result = await _userManager.UpdateAsync(user);
+
             if (result.Succeeded)
             {
-                _logger.LogInformation($"User {user.Email} deleted successfully");
-                return ResponseDto<bool>.SuccessResponse(true, "User deleted successfully.");
+                _logger.LogInformation($"User {user.Email} deactivated successfully");
+                return ResponseDto<bool>.SuccessResponse(true, "User deactivated successfully.");
             }
+
             var errors = result.Errors.Select(e => new ApiError
             {
                 ErrorCode = e.Code,
                 ErrorMessage = e.Description
             }).ToList();
 
-            _logger.LogWarning($"Failed to delete user {user.Email}: {string.Join(", ", errors.Select(err => err.ErrorMessage))}");
-            return ResponseDto<bool>.Failure("User deletion failed.", errors);
+            _logger.LogWarning($"Failed to deactivate user {user.Email}: {string.Join(", ", errors.Select(err => err.ErrorMessage))}");
+            return ResponseDto<bool>.Failure("User deactivation failed.", errors);
         }
 
-        public async Task<ResponseDto<List<UserDto>>> GetAllUsersAsync()
+
+        public async Task<ResponseDto<bool>> ReactivateUserAsync(string userId)
         {
-            return ResponseDto<List<UserDto>>.SuccessResponse(
-                _userManager.Users.Select(u => new UserDto
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    DateOfBirth = u.DateOfBirth,
-                    Email = u.Email,
-                    DepartamentId = u.DepartamentId.HasValue ? u.DepartamentId.Value : 0
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return ResponseDto<bool>.Failure("User not found.");
+            }
 
+            user.isActive = true;
+            var result = await _userManager.UpdateAsync(user);
 
-                }).ToList(), "Users retrieved successfully.");
+            if (result.Succeeded)
+            {
+                _logger.LogInformation($"User {user.Email} reactivated successfully");
+                return ResponseDto<bool>.SuccessResponse(true, "User reactivated successfully.");
+            }
+
+            var errors = result.Errors.Select(e => new ApiError
+            {
+                ErrorCode = e.Code,
+                ErrorMessage = e.Description
+            }).ToList();
+
+            return ResponseDto<bool>.Failure("User reactivation failed.", errors);
         }
+
+
+
+        //public async Task<ResponseDto<List<UserDto>>> GetAllUsersAsync()
+        //{
+        //    return ResponseDto<List<UserDto>>.SuccessResponse(
+        //        _userManager.Users.Select(u => new UserDto
+        //        {
+        //            Id = u.Id,
+        //            FirstName = u.FirstName,
+        //            LastName = u.LastName,
+        //            DateOfBirth = u.DateOfBirth,
+        //            Email = u.Email,
+        //            DepartamentId = u.DepartamentId.HasValue ? u.DepartamentId.Value : 0
+
+
+        //        }).ToList(), "Users retrieved successfully.");
+        //}
+
+        public async Task<ResponseDto<List<UserDto>>> GetAllUsersAsync(ClaimsPrincipal currentUser)
+        {
+            try
+            {
+                IQueryable<User> query = _appDbContext.Users;
+
+                // ✅ Kontrollojmë nëse useri është Admin ose SuperAdmin
+                if (currentUser.IsInRole(RoleTypes.Admin) || currentUser.IsInRole(RoleTypes.SuperAdmin))
+                {
+                    query = query.IgnoreQueryFilters();
+                }
+
+                var users = await query
+                    .Select(u => new UserDto
+                    {
+                        Id = u.Id,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        Email = u.Email,
+                        DateOfBirth = u.DateOfBirth,
+                        DepartamentId = u.DepartamentId.HasValue ? u.DepartamentId.Value : 0,
+                        isActive = u.isActive
+                    })
+                    .ToListAsync();
+
+                return ResponseDto<List<UserDto>>.SuccessResponse(users, "Users retrieved successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving users");
+                return ResponseDto<List<UserDto>>.Failure("An error occurred while retrieving users");
+            }
+        }
+
+
+
 
         public async Task<ResponseDto<UserDto>> GetUserByIdAsync(string userId)
         {
@@ -472,8 +570,9 @@ namespace HospitalityManagementSystems.Services.Implimentation
 
                 if (!allowedRoles.Contains(role))
                 {
-                    throw new ArgumentException($"Invalid role: {role}. Allowed roles are: {string.Join(", ", allowedRoles)}");
+                    return ResponseDto<bool>.Failure($"Invalid role: {role}. Allowed roles are: {string.Join(", ", allowedRoles)}");
                 }
+
 
                 var userExists = await _userManager.FindByEmailAsync(createUserDto.Email);
                 if (userExists != null)
@@ -487,7 +586,8 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     FirstName = createUserDto.FirstName,
                     LastName = createUserDto.LastName,
                     DateOfBirth = createUserDto.DateOfBirth,
-                    DepartamentId = createUserDto.DepartamentId
+                    DepartamentId = createUserDto.DepartamentId,
+                    isActive = true
                 };
 
                 await _userStore.SetUserNameAsync(user, createUserDto.Email, CancellationToken.None);

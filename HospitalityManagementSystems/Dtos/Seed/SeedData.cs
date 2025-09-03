@@ -22,7 +22,7 @@ namespace HospitalityManagementSystems.Data.Seed
                 }
             }
 
-            string superAdminEmail = "superadmin@hospital.com";
+            string superAdminEmail = "superadmin3@hospital.com";
             string superAdminPassword = "SuperAdmin123!"; 
 
             var superAdmin = await userManager.FindByEmailAsync(superAdminEmail);
@@ -35,7 +35,8 @@ namespace HospitalityManagementSystems.Data.Seed
                     FirstName = "System",
                     LastName = "SuperAdmin",
                     DateOfBirth = new DateTime(1990, 1, 1),
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    isActive = true
                 };
 
                 var result = await userManager.CreateAsync(superAdmin, superAdminPassword);
