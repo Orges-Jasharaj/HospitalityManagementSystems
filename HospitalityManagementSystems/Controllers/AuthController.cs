@@ -26,37 +26,47 @@ namespace HospitalityManagementSystems.Controllers
             return Ok(result);
         }
 
-        [HttpPost("registerDoctor")]
-        [Authorize(Roles = $"{RoleTypes.Admin},{RoleTypes.SuperAdmin}")]
-        public async Task<IActionResult> RegisterDoctor([FromBody] CreateUserDto createUserDto)
-        {
-            var result = await _userService.CreateDoctorAsync(createUserDto);
-            return Ok(result);
-        }
+        //[HttpPost("registerDoctor")]
+        //[Authorize(Roles = $"{RoleTypes.Admin},{RoleTypes.SuperAdmin}")]
+        //public async Task<IActionResult> RegisterDoctor([FromBody] CreateUserDto createUserDto)
+        //{
+        //    var result = await _userService.CreateDoctorAsync(createUserDto);
+        //    return Ok(result);
+        //}
 
-        [HttpPost("registerAdmin")]
+        //[HttpPost("registerAdmin")]
+        //[Authorize(Roles = $"{RoleTypes.SuperAdmin}")]
+        //public async Task<IActionResult> RegisterAdmin([FromBody] CreateUserDto createUserDto)
+        //{
+        //    var result = await _userService.CreateAdminAsync(createUserDto);
+        //    return Ok(result);
+        //}
+
+        //[HttpPost("registerNurse")]
+        //[Authorize(Roles = $"{RoleTypes.Admin},{RoleTypes.SuperAdmin}")]
+        //public async Task<IActionResult> RegisterNurse([FromBody] CreateUserDto createUserDto)
+        //{
+        //    var result = await _userService.CreateNurseAsync(createUserDto);
+        //    return Ok(result);
+        //}
+
+        //[HttpPost("registerAdminstrator")]
+        //[Authorize(Roles = $"{RoleTypes.Admin},{RoleTypes.SuperAdmin}")]
+        //public async Task<IActionResult> RegisterAdminstrator([FromBody] CreateUserDto createUserDto)
+        //{
+        //    var result = await _userService.CreateAdminstratorAsync(createUserDto);
+        //    return Ok(result);
+        //}
+
+        [HttpPost("registerUserWithRole")]
         [Authorize(Roles = $"{RoleTypes.SuperAdmin}")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] CreateUserDto createUserDto)
+        public async Task<IActionResult> RegisterUserWithRole([FromBody] CreateUserDto createUserWithRoleDto, string role)
         {
-            var result = await _userService.CreateAdminAsync(createUserDto);
+            var result = await _userService.CreateUserWithRoleAsync(createUserWithRoleDto, role);
             return Ok(result);
         }
 
-        [HttpPost("registerNurse")]
-        [Authorize(Roles = $"{RoleTypes.Admin},{RoleTypes.SuperAdmin}")]
-        public async Task<IActionResult> RegisterNurse([FromBody] CreateUserDto createUserDto)
-        {
-            var result = await _userService.CreateNurseAsync(createUserDto);
-            return Ok(result);
-        }
 
-        [HttpPost("registerAdminstrator")]
-        [Authorize(Roles = $"{RoleTypes.Admin},{RoleTypes.SuperAdmin}")]
-        public async Task<IActionResult> RegisterAdminstrator([FromBody] CreateUserDto createUserDto)
-        {
-            var result = await _userService.CreateAdminstratorAsync(createUserDto);
-            return Ok(result);
-        }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)

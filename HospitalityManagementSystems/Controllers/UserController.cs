@@ -48,7 +48,6 @@ namespace HospitalityManagementSystems.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
         [Authorize(Roles = $"{RoleTypes.SuperAdmin},{RoleTypes.Administrator},{RoleTypes.Admin}")]
         public async Task<IActionResult> DeleteUser(string id)
         {

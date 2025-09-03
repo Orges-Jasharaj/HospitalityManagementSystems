@@ -6,10 +6,11 @@ namespace HospitalityManagementSystems.Services.Interface
     public interface IUser
     {
         Task<ResponseDto<bool>> CreateUserAsync(CreateUserDto createUserDto);
-        Task<ResponseDto<bool>> CreateDoctorAsync(CreateUserDto createUserDto);
-        Task<ResponseDto<bool>> CreateAdminAsync(CreateUserDto createUserDto);
-        Task<ResponseDto<bool>> CreateAdminstratorAsync(CreateUserDto createUserDto);
-        Task<ResponseDto<bool>> CreateNurseAsync(CreateUserDto createUserDto);
+        //Task<ResponseDto<bool>> CreateDoctorAsync(CreateUserDto createUserDto);
+        //Task<ResponseDto<bool>> CreateAdminAsync(CreateUserDto createUserDto);
+        //Task<ResponseDto<bool>> CreateAdminstratorAsync(CreateUserDto createUserDto);
+        //Task<ResponseDto<bool>> CreateNurseAsync(CreateUserDto createUserDto);
+        Task<ResponseDto<bool>> CreateUserWithRoleAsync(CreateUserDto createUserDto, string role);
         Task<ResponseDto<LoginResponseDto>> LoginAsync(LoginDto loginDto);
         Task<ResponseDto<UserDto>> GetUserByIdAsync(string userId);
         Task<ResponseDto<List<UserDto>>> GetAllUsersAsync();
