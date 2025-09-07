@@ -200,7 +200,6 @@ namespace HospitalityManagementSystems.Services.Implimentation
             {
                 IQueryable<User> query = _appDbContext.Users;
 
-                // ✅ Kontrollojmë nëse useri është Admin ose SuperAdmin
                 if (currentUser.IsInRole(RoleTypes.Admin) || currentUser.IsInRole(RoleTypes.SuperAdmin))
                 {
                     query = query.IgnoreQueryFilters();

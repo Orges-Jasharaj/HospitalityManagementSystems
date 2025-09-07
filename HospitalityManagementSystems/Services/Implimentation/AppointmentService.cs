@@ -13,12 +13,11 @@ namespace HospitalityManagementSystems.Services.Implimentation
         private readonly AppDbContext _context;
         private readonly ILogger<AppointmentService> _logger;
 
-        public AppointmentService(AppDbContext context,ILogger<AppointmentService> logger)
+        public AppointmentService(AppDbContext context, ILogger<AppointmentService> logger)
         {
             _context = context;
             _logger = logger;
         }
-
 
         public async Task<ResponseDto<bool>> CreateAppointmentAsync(CreateAppointmentsDto createAppointmentsDto)
         {
@@ -29,7 +28,7 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     message: "Patient not found",
                     errors: new List<ApiError>
                     {
-                new ApiError { ErrorCode = "PATIENT_NOT_FOUND", ErrorMessage = $"No patient exists with Id {createAppointmentsDto.PatientId}" }
+                        new ApiError { ErrorCode = "PATIENT_NOT_FOUND", ErrorMessage = $"No patient exists with Id {createAppointmentsDto.PatientId}" }
                     }
                 );
             }
@@ -42,7 +41,33 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     message: "Doctor not found",
                     errors: new List<ApiError>
                     {
-                new ApiError { ErrorCode = "DOCTOR_NOT_FOUND", ErrorMessage = $"No doctor exists with Id {createAppointmentsDto.DoctorId}" }
+                        new ApiError { ErrorCode = "DOCTOR_NOT_FOUND", ErrorMessage = $"No doctor exists with Id {createAppointmentsDto.DoctorId}" }
+                    }
+                );
+            }
+
+            // kontrollo overlaping (30 minuta)
+            var startTime = createAppointmentsDto.AppointmentDate;
+            var endTime = startTime.AddMinutes(30);
+
+            var isOverlapping = await _context.Appointments.AnyAsync(a =>
+                a.DoctorId == createAppointmentsDto.DoctorId &&
+                (a.AppointmentDate < endTime) &&
+                (a.AppointmentDate.AddMinutes(30) > startTime) &&
+                a.Status != "Cancelled"
+            );
+
+            if (isOverlapping)
+            {
+                return ResponseDto<bool>.Failure(
+                    message: "Doctor already has an appointment in this time slot",
+                    errors: new List<ApiError>
+                    {
+                        new ApiError
+                        {
+                            ErrorCode = "TIME_CONFLICT",
+                            ErrorMessage = $"Doctor already has an appointment between {startTime} and {endTime}"
+                        }
                     }
                 );
             }
@@ -54,8 +79,8 @@ namespace HospitalityManagementSystems.Services.Implimentation
                 AppointmentDate = createAppointmentsDto.AppointmentDate,
                 Reason = createAppointmentsDto.Reason,
                 Status = createAppointmentsDto.Status,
-                CreatedBy = createAppointmentsDto.PatientId,  
-                CreatedDate = DateTime.UtcNow            
+                CreatedBy = createAppointmentsDto.PatientId,
+                CreatedDate = DateTime.UtcNow
             };
 
             _context.Appointments.Add(appointment);
@@ -64,27 +89,25 @@ namespace HospitalityManagementSystems.Services.Implimentation
             return ResponseDto<bool>.SuccessResponse(true, "Appointment created successfully");
         }
 
-
-
         public async Task<ResponseDto<bool>> DeleteAppointmentAsync(int id)
         {
-            var appointment = await _context.Appointments.FirstOrDefaultAsync(u => u.Id==id);
+            var appointment = await _context.Appointments.FirstOrDefaultAsync(u => u.Id == id);
             if (appointment == null)
             {
                 return ResponseDto<bool>.Failure(
                     message: "Appointment not found",
                     errors: new List<ApiError>
                     {
-                new ApiError
-                {
-                    ErrorCode = "PATIENT_NOT_FOUND",
-                    ErrorMessage = $"No appointment exists with Id {id}"
-                }
+                        new ApiError
+                        {
+                            ErrorCode = "APPOINTMENT_NOT_FOUND",
+                            ErrorMessage = $"No appointment exists with Id {id}"
+                        }
                     }
                 );
             }
             _context.Appointments.Remove(appointment);
-            await _context.SaveChangesAsync( );
+            await _context.SaveChangesAsync();
             _logger.LogInformation($"Appointment with id : {id} has been deleted by {appointment.PatientId}");
 
             return ResponseDto<bool>.SuccessResponse(true, "Appointment has been deleted successfully");
@@ -93,8 +116,8 @@ namespace HospitalityManagementSystems.Services.Implimentation
         public async Task<ResponseDto<List<AppointmentsDto>>> GetAllAppointmentsAsync()
         {
             var appointments = await _context.Appointments
-                .Include(a => a.Patient)  
-                .Include(a => a.Doctor)  
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
                 .Select(a => new AppointmentsDto
                 {
                     Id = a.Id,
@@ -143,11 +166,11 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     message: "No appointments found for this doctor",
                     errors: new List<ApiError>
                     {
-                new ApiError
-                {
-                    ErrorCode = "APPOINTMENT_NOT_FOUND",
-                    ErrorMessage = $"No appointments found for doctor with Id {doctorId}"
-                }
+                        new ApiError
+                        {
+                            ErrorCode = "APPOINTMENT_NOT_FOUND",
+                            ErrorMessage = $"No appointments found for doctor with Id {doctorId}"
+                        }
                     }
                 );
             }
@@ -184,11 +207,11 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     message: "No appointments found for this patient",
                     errors: new List<ApiError>
                     {
-                new ApiError
-                {
-                    ErrorCode = "APPOINTMENT_NOT_FOUND",
-                    ErrorMessage = $"No appointments found for patient with Id {patientId}"
-                }
+                        new ApiError
+                        {
+                            ErrorCode = "APPOINTMENT_NOT_FOUND",
+                            ErrorMessage = $"No appointments found for patient with Id {patientId}"
+                        }
                     }
                 );
             }
@@ -209,11 +232,11 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     message: "Appointment not found",
                     errors: new List<ApiError>
                     {
-                new ApiError
-                {
-                    ErrorCode = "APPOINTMENT_NOT_FOUND",
-                    ErrorMessage = $"No appointment exists with Id {id}"
-                }
+                        new ApiError
+                        {
+                            ErrorCode = "APPOINTMENT_NOT_FOUND",
+                            ErrorMessage = $"No appointment exists with Id {id}"
+                        }
                     }
                 );
             }
@@ -245,11 +268,11 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     message: "Appointment not found",
                     errors: new List<ApiError>
                     {
-                new ApiError
-                {
-                    ErrorCode = "APPOINTMENT_NOT_FOUND",
-                    ErrorMessage = $"No appointment exists with Id {id}"
-                }
+                        new ApiError
+                        {
+                            ErrorCode = "APPOINTMENT_NOT_FOUND",
+                            ErrorMessage = $"No appointment exists with Id {id}"
+                        }
                     }
                 );
             }
@@ -262,11 +285,11 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     message: "Patient not found",
                     errors: new List<ApiError>
                     {
-                new ApiError
-                {
-                    ErrorCode = "PATIENT_NOT_FOUND",
-                    ErrorMessage = $"No patient exists with Id {updateDto.PatientId}"
-                }
+                        new ApiError
+                        {
+                            ErrorCode = "PATIENT_NOT_FOUND",
+                            ErrorMessage = $"No patient exists with Id {updateDto.PatientId}"
+                        }
                     }
                 );
             }
@@ -279,11 +302,37 @@ namespace HospitalityManagementSystems.Services.Implimentation
                     message: "Doctor not found",
                     errors: new List<ApiError>
                     {
-                new ApiError
-                {
-                    ErrorCode = "DOCTOR_NOT_FOUND",
-                    ErrorMessage = $"No doctor exists with Id {updateDto.DoctorId}"
-                     }
+                        new ApiError
+                        {
+                            ErrorCode = "DOCTOR_NOT_FOUND",
+                            ErrorMessage = $"No doctor exists with Id {updateDto.DoctorId}"
+                        }
+                    }
+                );
+            }
+
+            var startTime = updateDto.AppointmentDate;
+            var endTime = startTime.AddMinutes(30);
+
+            var isOverlapping = await _context.Appointments.AnyAsync(a =>
+                a.DoctorId == updateDto.DoctorId &&
+                a.Id != id && 
+                (a.AppointmentDate < endTime) &&
+                (a.AppointmentDate.AddMinutes(30) > startTime) &&
+                a.Status != "Cancelled"
+            );
+
+            if (isOverlapping)
+            {
+                return ResponseDto<bool>.Failure(
+                    message: "Doctor already has an appointment in this time slot",
+                    errors: new List<ApiError>
+                    {
+                        new ApiError
+                        {
+                            ErrorCode = "TIME_CONFLICT",
+                            ErrorMessage = $"Doctor already has an appointment between {startTime} and {endTime}"
+                        }
                     }
                 );
             }
@@ -300,7 +349,5 @@ namespace HospitalityManagementSystems.Services.Implimentation
             _logger.LogInformation($"Appointment with this id {id} is been updated successfully by {updateDto.PatientId}");
             return ResponseDto<bool>.SuccessResponse(true, "Appointment updated successfully");
         }
-
-
     }
 }
